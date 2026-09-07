@@ -66,7 +66,12 @@ class HomeScreen extends StatelessWidget {
                 title: 'Medicamentos',
                 subtitle: 'Veja seus medicamentos',
                 color: Colors.green,
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.medications,
+                  );
+                },
               ),
 
               const SizedBox(height: 16),

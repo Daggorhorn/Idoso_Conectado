@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/medicamento.dart';
+import '../../services/notification_service.dart';
 
 class AddMedicationScreen extends StatefulWidget {
   const AddMedicationScreen({super.key});
@@ -19,24 +20,27 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
 
   String _frequencia = 'Todos os dias';
 
+  final NotificationService _notificationService =
+      NotificationService();
+
   @override
   void initState() {
-  super.initState();
+    super.initState();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final medicamento = ModalRoute.of(context)?.settings.arguments;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final medicamento = ModalRoute.of(context)?.settings.arguments;
 
-    if (medicamento is Medicamento) {
-      setState(() {
-        _medicamentoEmEdicao = medicamento;
-        _nomeController.text = medicamento.nome;
-        _dosagemController.text = medicamento.dosagem;
-        _horarioController.text = medicamento.horario;
-        _frequencia = medicamento.frequencia;
-      });
-    }
-  });
-}
+      if (medicamento is Medicamento) {
+        setState(() {
+          _medicamentoEmEdicao = medicamento;
+          _nomeController.text = medicamento.nome;
+          _dosagemController.text = medicamento.dosagem;
+          _horarioController.text = medicamento.horario;
+          _frequencia = medicamento.frequencia;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -46,20 +50,84 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
     super.dispose();
   }
 
-  void _salvarMedicamento() {
-  if (!_formKey.currentState!.validate()) {
-    return;
+  // Converte o horário escolhido pelo TimePicker para HH:mm.
+  String _formatarHorario(TimeOfDay horario) {
+    final hora = horario.hour.toString().padLeft(2, '0');
+    final minuto = horario.minute.toString().padLeft(2, '0');
+
+    return '$hora:$minuto';
   }
 
-  final medicamento = Medicamento(
-    nome: _nomeController.text.trim(),
-    dosagem: _dosagemController.text.trim(),
-    horario: _horarioController.text.trim(),
-    frequencia: _frequencia,
-  );
+  int _gerarIdNotificacao(Medicamento medicamento) {
+    final texto =
+        '${medicamento.nome}|'
+        '${medicamento.dosagem}|'
+        '${medicamento.horario}|'
+        '${medicamento.frequencia}';
 
-  Navigator.pop(context, medicamento);
-}
+    int hash = 2166136261;
+
+    for (final caractere in texto.codeUnits) {
+      hash ^= caractere;
+      hash = (hash * 16777619) & 0x7fffffff;
+    }
+
+    return hash == 0 ? 1 : hash;
+  }
+
+  Future<void> _agendarNotificacao(
+    Medicamento medicamento,
+  ) async {
+    if (!_notificationService.inicializado) {
+      await _notificationService.inicializar();
+    }
+
+    final id = _gerarIdNotificacao(medicamento);
+
+    if (medicamento.frequencia == 'Todos os dias') {
+      await _notificationService.agendarMedicamentoDiario(
+        id: id,
+        nomeMedicamento: medicamento.nome,
+        horario: medicamento.horario,
+      );
+    } else {
+      await _notificationService.agendarMedicamento(
+        id: id,
+        nomeMedicamento: medicamento.nome,
+        horario: medicamento.horario,
+      );
+    }
+  }
+
+  Future<void> _salvarMedicamento() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final medicamento = Medicamento(
+      nome: _nomeController.text.trim(),
+      dosagem: _dosagemController.text.trim(),
+      horario: _horarioController.text.trim(),
+      frequencia: _frequencia,
+    );
+
+    // Se estiver editando, cancela a notificação anterior.
+    if (_medicamentoEmEdicao != null) {
+      final idAntigo =
+          _gerarIdNotificacao(_medicamentoEmEdicao!);
+
+      await _notificationService.cancelar(idAntigo);
+    }
+
+    // Cria o novo lembrete.
+    await _agendarNotificacao(medicamento);
+
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.pop(context, medicamento);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +135,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
       appBar: AppBar(
         title: Text(
           _medicamentoEmEdicao == null
-          ? 'Adicionar Medicamento'
-          : 'Editar Medicamento',
+              ? 'Adicionar Medicamento'
+              : 'Editar Medicamento',
         ),
       ),
       body: SafeArea(
@@ -92,7 +160,9 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                       ? 'Novo medicamento'
                       : 'Editar medicamento',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium,
                 ),
 
                 const SizedBox(height: 30),
@@ -106,7 +176,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
+                    if (value == null ||
+                        value.trim().isEmpty) {
                       return 'Informe o nome do medicamento';
                     }
 
@@ -125,7 +196,8 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     border: OutlineInputBorder(),
                   ),
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
+                    if (value == null ||
+                        value.trim().isEmpty) {
                       return 'Informe a dosagem';
                     }
 
@@ -153,12 +225,13 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
                     if (horario != null) {
                       setState(() {
                         _horarioController.text =
-                            horario.format(context);
+                            _formatarHorario(horario);
                       });
                     }
                   },
                   validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
+                    if (value == null ||
+                        value.trim().isEmpty) {
                       return 'Informe o horário';
                     }
 
@@ -220,6 +293,6 @@ class _AddMedicationScreenState extends State<AddMedicationScreen> {
           ),
         ),
       ),
-    ); 
+    );
   }
 }

@@ -77,11 +77,16 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               _HomeCard(
-                icon: Icons.notifications,
-                title: 'Lembretes',
-                subtitle: 'Confira seus lembretes',
+                icon: Icons.calendar_month,
+                title: 'Agenda de consultas',
+                subtitle: 'Organize suas consultas',
                 color: Colors.orange,
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.consultations,
+                  );
+                },
               ),
 
               const SizedBox(height: 16),

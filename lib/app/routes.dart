@@ -6,6 +6,7 @@ import '../screens/emergency/emergency_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/medications/medications_screen.dart';
 import '../screens/medications/add_medication_screen.dart';
+import '../screens/consultations/consultations_screen.dart';
 
 class AppRoutes {
   
@@ -15,6 +16,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String medications = '/medications';
   static const String addMedication = '/add-medication';
+  static const String consultations = '/consultations';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => const SplashScreen(),
@@ -23,5 +25,6 @@ class AppRoutes {
         profile: (context) => const ProfileScreen(),
         medications: (context) => const MedicationsScreen(),
         addMedication: (context) => const AddMedicationScreen(),
+        consultations: (context) => const ConsultationsScreen(),
       };
 }

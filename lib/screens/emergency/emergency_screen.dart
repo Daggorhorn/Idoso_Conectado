@@ -43,7 +43,10 @@ class EmergencyScreen extends StatelessWidget {
 
               const Spacer(),
 
-              SizedBox(
+            Semantics(
+              button: true,
+              label: 'Pedir ajuda em uma emergência',
+              child:SizedBox(
                 height: 90,
                 child: ElevatedButton.icon(
                   onPressed: () {
@@ -72,7 +75,7 @@ class EmergencyScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
+            ),
               const SizedBox(height: 30),
             ],
           ),

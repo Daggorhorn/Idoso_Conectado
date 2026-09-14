@@ -91,23 +91,6 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              _HomeCard(
-                icon: Icons.people,
-                title: 'Contatos',
-                subtitle: 'Pessoas importantes',
-                color: Colors.blue,
-                onTap: () {},
-              ),
-
-              const SizedBox(height: 16),
-
-              _HomeCard(
-                icon: Icons.location_on,
-                title: 'Localização',
-                subtitle: 'Compartilhe sua localização',
-                color: Colors.purple,
-                onTap: () {},
-              ),
             ],
           ),
         ),
@@ -131,9 +114,13 @@ class _HomeCard extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
+
   @override
   Widget build(BuildContext context) {
-    return Card(
+  return Semantics(
+    button: true,
+    label: '$title. $subtitle',
+    child: Card(
       elevation: 2,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -177,6 +164,7 @@ class _HomeCard extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ),
+  );
   }
 }

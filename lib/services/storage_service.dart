@@ -4,10 +4,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/consulta.dart';
 import '../models/medicamento.dart';
+import '../models/contato_emergencia.dart';
 
 class StorageService {
   static const String _medicamentosKey = 'medicamentos';
   static const String _consultasKey = 'consultas';
+  static const String _contatoEmergenciaKey = 'contato_emergencia';
 
   Future<void> salvarMedicamentos(
     List<Medicamento> medicamentos,
@@ -75,5 +77,37 @@ class StorageService {
           ),
         )
         .toList();
+  }
+
+    Future<void> salvarContatoEmergencia(
+    ContatoEmergencia contato,
+  ) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final dados = jsonEncode(contato.toMap());
+
+    await prefs.setString(_contatoEmergenciaKey, dados);
+  }
+
+  Future<ContatoEmergencia?> carregarContatoEmergencia() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final dados = prefs.getString(_contatoEmergenciaKey);
+
+    if (dados == null || dados.isEmpty) {
+      return null;
+    }
+
+    final mapa = jsonDecode(dados) as Map;
+
+    return ContatoEmergencia.fromMap(
+      Map<String, dynamic>.from(mapa),
+    );
+  }
+
+  Future<void> removerContatoEmergencia() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.remove(_contatoEmergenciaKey);
   }
 }

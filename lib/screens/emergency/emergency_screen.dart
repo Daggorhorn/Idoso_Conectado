@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/contato_emergencia.dart';
+import '../../services/location_service.dart';
 import '../../services/storage_service.dart';
 
 class EmergencyScreen extends StatefulWidget {
@@ -13,6 +15,7 @@ class EmergencyScreen extends StatefulWidget {
 
 class _EmergencyScreenState extends State<EmergencyScreen> {
   final StorageService _storageService = StorageService();
+  final LocationService _locationService = LocationService();
 
   ContatoEmergencia? _contatoEmergencia;
 
@@ -57,6 +60,64 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
         content: Text('Contato de emergência salvo.'),
       ),
     );
+
+    // Solicita a permissão de localização antecipadamente.
+    // Assim, em uma situação de emergência, o aplicativo
+    // não precisa interromper o usuário com esse pedido.
+    final permissaoConcedida =
+        await _locationService.solicitarPermissaoLocalizacao();
+
+    if (!mounted) return;
+
+    if (!permissaoConcedida) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'A permissão de localização não foi concedida. '
+            'Ela será necessária para compartilhar sua localização.',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _compartilharLocalizacao() async {
+  final localizacao =
+      await _locationService.obterLocalizacaoAtual();
+
+  if (!mounted) return;
+
+  if (localizacao == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Não foi possível obter sua localização. '
+          'Verifique se a localização do celular está ativada.',
+        ),
+      ),
+    );
+    return;
+  }
+
+  final latitude = localizacao.latitude;
+  final longitude = localizacao.longitude;
+
+  final linkMapa =
+      'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+
+  final mensagem = '''
+  Olá, preciso de ajuda.
+
+  Esta é minha localização atual:
+
+  $linkMapa
+  ''';
+
+  await SharePlus.instance.share(
+    ShareParams(
+      text: mensagem,
+    ),
+  );
   }
 
   Future<void> _ligarParaContato() async {
@@ -94,57 +155,57 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     }
   }
 
-Future<void> _removerContato() async {
-  final contato = _contatoEmergencia;
+  Future<void> _removerContato() async {
+    final contato = _contatoEmergencia;
 
-  if (contato == null) return;
+    if (contato == null) return;
 
-  final confirmar = await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Remover contato'),
-        content: Text(
-          'Deseja remover ${contato.nome} como seu contato de emergência?',
-        ),
-        actions: [
-          Semantics(
-            button: true,
-            label: 'Cancelar remoção do contato',
-            child: TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar'),
-            ),
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Remover contato'),
+          content: Text(
+            'Deseja remover ${contato.nome} como seu contato de emergência?',
           ),
-          Semantics(
-            button: true,
-            label: 'Confirmar remoção do contato',
-            child: FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Remover'),
+          actions: [
+            Semantics(
+              button: true,
+              label: 'Cancelar remoção do contato',
+              child: TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancelar'),
+              ),
             ),
-          ),
-        ],
-      );
-    },
-  );
+            Semantics(
+              button: true,
+              label: 'Confirmar remoção do contato',
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Remover'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
 
-  if (confirmar != true) return;
+    if (confirmar != true) return;
 
-  await _storageService.removerContatoEmergencia();
+    await _storageService.removerContatoEmergencia();
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  setState(() {
-    _contatoEmergencia = null;
-  });
+    setState(() {
+      _contatoEmergencia = null;
+    });
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Contato de emergência removido.'),
-    ),
-  );
-}
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Contato de emergência removido.'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -222,11 +283,33 @@ Future<void> _removerContato() async {
                 onPressed: _cadastrarContato,
               )
             else
-              _ContatoSalvo(
-                contato: _contatoEmergencia!,
-                onLigar: _ligarParaContato,
-                onEditar: _cadastrarContato,
-                onRemover: _removerContato,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _ContatoSalvo(
+                    contato: _contatoEmergencia!,
+                    onLigar: _ligarParaContato,
+                    onEditar: _cadastrarContato,
+                    onRemover: _removerContato,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Semantics(
+                    button: true,
+                    label: 'Compartilhar minha localização atual',
+                    child: SizedBox(
+                      height: 64,
+                      child: FilledButton.icon(
+                        onPressed: _compartilharLocalizacao,
+                        icon: const Icon(Icons.location_on),
+                        label: const Text(
+                        'Compartilhar minha localização',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
           ],
         ),
@@ -478,7 +561,7 @@ class _ContatoSalvo extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: onRemover,
                 icon: const Icon(Icons.delete_outline),
-              label: const Text('Remover contato'),
+                label: const Text('Remover contato'),
               ),
             ),
           ],

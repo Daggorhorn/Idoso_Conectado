@@ -10,19 +10,6 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Idoso Conectado'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            iconSize: 30,
-            tooltip: 'Meu perfil',
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                AppRoutes.profile,
-              );
-            },
-          ),
-        ],
       ),
 
       body: SafeArea(
@@ -57,7 +44,6 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               ),
-
 
               const SizedBox(height: 16),
 
@@ -105,8 +91,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          ),
         ),
+      ),
     );
   }
 }
@@ -126,57 +112,56 @@ class _HomeCard extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-
   @override
   Widget build(BuildContext context) {
-  return Semantics(
-    button: true,
-    label: '$title. $subtitle',
-    child: Card(
-      elevation: 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 48,
-                color: color,
-              ),
-
-              const SizedBox(width: 20),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-
-                    const SizedBox(height: 4),
-
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
+    return Semantics(
+      button: true,
+      label: '$title. $subtitle',
+      child: Card(
+        elevation: 2,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 48,
+                  color: color,
                 ),
-              ),
 
-              const Icon(
-                Icons.arrow_forward_ios,
-                size: 24,
-              ),
-            ],
+                const SizedBox(width: 20),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      Text(
+                        subtitle,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 24,
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
   }
 }

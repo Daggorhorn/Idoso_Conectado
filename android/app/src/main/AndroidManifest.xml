@@ -9,6 +9,12 @@
     <!-- Permite reagendar notificações após reiniciar o aparelho -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Permite acesso à localização precisa -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Permite acesso à localização aproximada -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:label="idoso_conectado"
         android:name="${applicationName}"

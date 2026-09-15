@@ -91,10 +91,22 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 16),
 
+              _HomeCard(
+                icon: Icons.menu_book,
+                title: 'Direitos dos Idosos',
+                subtitle: 'Conheça seus direitos de forma simples.',
+                color: Colors.blue,
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.rights,
+                  );
+                },
+              ),
             ],
           ),
+          ),
         ),
-      ),
     );
   }
 }

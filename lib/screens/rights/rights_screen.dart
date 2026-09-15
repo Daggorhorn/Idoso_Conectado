@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
+import 'transport_screen.dart';
 
 class RightsScreen extends StatelessWidget {
   const RightsScreen({super.key});
@@ -49,6 +50,14 @@ class RightsScreen extends StatelessWidget {
             icone: Icons.directions_bus,
             titulo: 'Transporte',
             descricao: 'Informações sobre direitos relacionados ao transporte.',
+            onTap: () { 
+              Navigator.push( 
+                context, 
+                MaterialPageRoute( 
+                  builder: (context) => const TransportScreen(),
+                ), 
+              );
+            },
           ),
 
           _CategoriaDireito(

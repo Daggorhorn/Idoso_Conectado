@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
 import 'transport_screen.dart';
+import 'benefits_screen.dart';
+import 'violence_screen.dart';
+import 'housing_screen.dart';
+import 'family_screen.dart';
 
 class RightsScreen extends StatelessWidget {
   const RightsScreen({super.key});
@@ -64,24 +68,56 @@ class RightsScreen extends StatelessWidget {
             icone: Icons.account_balance_wallet,
             titulo: 'Benefícios e assistência',
             descricao: 'Informações sobre benefícios e serviços de assistência.',
+            onTap: () { 
+              Navigator.push( 
+                context, 
+                MaterialPageRoute( 
+                  builder: (context) => const BenefitsScreen(),
+                ), 
+              );
+            },
           ),
 
           _CategoriaDireito(
             icone: Icons.shield,
             titulo: 'Proteção contra violência',
             descricao: 'Informações sobre proteção, respeito e denúncia.',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ViolenceScreen(),
+                ),
+              );
+            },
           ),
 
           _CategoriaDireito(
             icone: Icons.home,
             titulo: 'Moradia',
             descricao: 'Informações sobre direitos relacionados à moradia.',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HousingScreen(),
+                ),
+              );
+            },
           ),
 
           _CategoriaDireito(
             icone: Icons.family_restroom,
             titulo: 'Família e convivência',
             descricao: 'Informações sobre convivência familiar e comunitária.',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FamilyScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),

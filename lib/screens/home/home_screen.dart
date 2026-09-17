@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
+import '../important_places/important_places_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -76,6 +77,21 @@ class HomeScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
+
+              _HomeCard(
+                icon: Icons.location_on,
+                title: 'Locais importantes',
+                subtitle: 'Encontre locais e serviços que podem ajudar você.',
+                color: Colors.teal,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ImportantPlacesScreen(),
+                    ),
+                  );
+                },
+              ),
 
               _HomeCard(
                 icon: Icons.menu_book,

@@ -12,7 +12,6 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Idoso Conectado'),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -33,78 +32,86 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              _HomeCard(
-                icon: Icons.emergency,
-                title: 'Emergência',
-                subtitle: 'Precisa de ajuda?',
-                color: Colors.red,
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.emergency,
-                  );
-                },
+              GridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 16,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio: 0.90,
+                children: [
+                  _HomeCard(
+                    icon: Icons.emergency,
+                    title: 'Emergência',
+                    subtitle: 'Precisa de ajuda?',
+                    color: Colors.red,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.emergency,
+                      );
+                    },
+                  ),
+
+                  _HomeCard(
+                    icon: Icons.medication,
+                    title: 'Medicamentos',
+                    subtitle: 'Veja seus medicamentos',
+                    color: Colors.green,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.medications,
+                      );
+                    },
+                  ),
+
+                  _HomeCard(
+                    icon: Icons.calendar_month,
+                    title: 'Consultas',
+                    subtitle: 'Organize suas consultas',
+                    color: Colors.orange,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.consultations,
+                      );
+                    },
+                  ),
+
+                  _HomeCard(
+                    icon: Icons.location_on,
+                    title: 'Locais importantes',
+                    subtitle:
+                        'Encontre locais e serviços que podem ajudar você.',
+                    color: Colors.teal,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const ImportantPlacesScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _HomeCard(
+                    icon: Icons.menu_book,
+                    title: 'Direitos dos Idosos',
+                    subtitle: 'Conheça seus direitos de forma simples.',
+                    color: Colors.blue,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.rights,
+                      );
+                    },
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 16),
-
-              _HomeCard(
-                icon: Icons.medication,
-                title: 'Medicamentos',
-                subtitle: 'Veja seus medicamentos',
-                color: Colors.green,
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.medications,
-                  );
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              _HomeCard(
-                icon: Icons.calendar_month,
-                title: 'Agenda de consultas',
-                subtitle: 'Organize suas consultas',
-                color: Colors.orange,
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.consultations,
-                  );
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              _HomeCard(
-                icon: Icons.location_on,
-                title: 'Locais importantes',
-                subtitle: 'Encontre locais e serviços que podem ajudar você.',
-                color: Colors.teal,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ImportantPlacesScreen(),
-                    ),
-                  );
-                },
-              ),
-
-              _HomeCard(
-                icon: Icons.menu_book,
-                title: 'Direitos dos Idosos',
-                subtitle: 'Conheça seus direitos de forma simples.',
-                color: Colors.blue,
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.rights,
-                  );
-                },
-              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -139,39 +146,27 @@ class _HomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   icon,
-                  size: 48,
+                  size: 56,
                   color: color,
                 ),
 
-                const SizedBox(width: 20),
+                const SizedBox(height: 16),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ],
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ),
-
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 24,
                 ),
               ],
             ),

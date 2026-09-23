@@ -101,7 +101,7 @@ lib/
 
 [📦 Baixar app-release.apk diretamente](https://github.com/Daggorhorn/Idoso_Conectado/releases/download/v1.0.0/app-release.apk)
 
-> APK de aproximadamente 53,2 MB.
+> APK de aproximadamente 55 MB.
 
 ### 📱 Instalação por QR Code
 
@@ -128,15 +128,6 @@ flutter build apk --release
 
 A versão `v1.0.0` foi validada em dispositivo Android físico, incluindo navegação, TalkBack, medicamentos, notificações, consultas, emergência, contato de emergência, localização, direitos, saúde e locais importantes.
 
-```text
-flutter analyze
-No issues found!
-```
-
-## 🎓 Contexto acadêmico
-
-Projeto desenvolvido durante a formação em **Análise e Desenvolvimento de Sistemas**, aplicando desenvolvimento mobile, acessibilidade, persistência de dados, notificações e integração com recursos do dispositivo.
-
 ## 👨‍💻 Autor
 
 **Igor Gabriel Martins**
@@ -147,7 +138,3 @@ Estudante de Análise e Desenvolvimento de Sistemas.
 - LinkedIn: [Igor Gabriel Martins](https://linkedin.com/in/igor-gabriel-b8760b366)
 
 ---
-
-<p align="center">
-  Desenvolvido com Flutter 💙
-</p>
